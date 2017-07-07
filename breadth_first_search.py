@@ -1,12 +1,5 @@
-# search returns
-# a table of values called expand. This table
-# keeps track of which step each node was
-# expanded.
-# from Udacity Self-Driving Car Nanodegree course
 # -----------
-# User Instructions:
-#
-# Modify the the search function so that it returns
+# the search function returns
 # a shortest path as follows:
 # 
 # [['>', 'v', ' ', ' ', ' ', ' '],
@@ -19,13 +12,11 @@
 # up, and down motions. Note that the 'v' should be 
 # lowercase. '*' should mark the goal cell.
 #
-# You may assume that all test cases for this function
-# will have a path from init to goal.
 # ----------
 
 grid = [[0, 0, 1, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 1, 0, 1, 0],
+        [0, 1, 1, 0, 1, 0],
+        [0, 0, 0, 0, 1, 0],
         [0, 0, 1, 0, 1, 0],
         [0, 0, 1, 0, 1, 0]]
 init = [0, 0]
@@ -45,8 +36,9 @@ def search(grid,init,goal,cost):
     # ----------------------------------------
     closed = [[0 for row in range(len(grid[0]))] for col in range(len(grid))]
     closed[init[0]][init[1]] = 1
+    action = [[-1 for row in range(len(grid[0]))] for col in range(len(grid))]
     expand = [[' ' for row in range(len(grid[0]))] for col in range(len(grid))]
-
+    
     x = init[0]
     y = init[1]
     g = 0
@@ -70,21 +62,31 @@ def search(grid,init,goal,cost):
             
             if x == goal[0] and y == goal[1]:
                 found = True
-                expand[x][y] = '*'
             else:
                 for i in range(len(delta)):
                     x2 = x + delta[i][0]
                     y2 = y + delta[i][1]
                     if x2 >= 0 and x2 < len(grid) and y2 >=0 and y2 < len(grid[0]):
                         if closed[x2][y2] == 0 and grid[x2][y2] == 0:
-                            expand[x][y] = delta_name[i];
                             g2 = g + cost
                             open.append([g2, x2, y2])
                             closed[x2][y2] = 1
+                            action[x2][y2] = i
+    if found:
+        i = goal[0]
+        j = goal[1]
+        expand[i][j] = '*' 
+        while (i != init[0]) or (j != init[1]):
+            next_i = i-delta[action[i][j]][0]
+            next_j = j-delta[action[i][j]][1]
+            expand[next_i][next_j] = delta_name[action[i][j]]
+            i = next_i
+            j = next_j
+        expand[next_i][next_j] = delta_name[action[i][j]]
+        return expand # make sure you return the shortest path
+    else:
+        return 'fail'
     
-    return expand # make sure you return the shortest path
-
 result = search(grid,init,goal,cost)
-
-for elem in result:
-    print elem
+for el in result:
+    print el
