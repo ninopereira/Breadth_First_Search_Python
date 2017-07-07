@@ -82,7 +82,6 @@ def search(grid,init,goal,cost):
             expand[next_i][next_j] = delta_name[action[i][j]]
             i = next_i
             j = next_j
-        expand[next_i][next_j] = delta_name[action[i][j]]
         return expand # make sure you return the shortest path
     else:
         return 'fail'
